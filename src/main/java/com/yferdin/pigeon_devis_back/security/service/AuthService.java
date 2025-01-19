@@ -64,7 +64,7 @@ public class AuthService {
         // Attribution du rôle USER par défaut
         Role userRole = roleRepository.findByName(RoleType.ROLE_USER)
             .orElseThrow(() -> new RuntimeException("Erreur: Le rôle USER n'existe pas"));
-        user.getRoles().add(userRole);
+        user.setRole(userRole);
 
         userRepository.save(user);
 
