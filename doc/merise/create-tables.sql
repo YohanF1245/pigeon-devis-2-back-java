@@ -71,10 +71,11 @@ COMMENT ON TABLE roles IS 'Table des rôles utilisateur';
 CREATE TABLE user_roles (
     user_id UUID NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
     role_id INTEGER NOT NULL REFERENCES roles(role_id) ON DELETE CASCADE,
-    PRIMARY KEY (user_id, role_id)
+    PRIMARY KEY (user_id, role_id),
+    CONSTRAINT unique_user_role UNIQUE (user_id)
 );
 
-COMMENT ON TABLE user_roles IS 'Table de liaison entre utilisateurs et rôles';
+COMMENT ON TABLE user_roles IS 'Table de liaison entre utilisateurs et rôles (un utilisateur a exactement un rôle)';
 
 -- Insertion des rôles par défaut
 INSERT INTO roles (name) VALUES ('ROLE_USER'), ('ROLE_ADMIN');
