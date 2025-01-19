@@ -18,10 +18,10 @@
 | role_id | SERIAL | - | Identifiant unique | Clé primaire |
 | name | ENUM | - | Type de rôle (USER/ADMIN) | Unique, Required |
 
-## Rôles Utilisateur (UserRole)
+## Rôle Utilisateur (UserRole)
 | Champ | Type | Taille | Description | Règle |
 |-------|------|---------|-------------|--------|
-| user_id | UUID | 36 | ID de l'utilisateur | FK User, Required |
+| user_id | UUID | 36 | ID de l'utilisateur | FK User, Required, Unique |
 | role_id | INTEGER | - | ID du rôle | FK Role, Required |
 
 ## Réinitialisation de mot de passe (PasswordResetLink)
