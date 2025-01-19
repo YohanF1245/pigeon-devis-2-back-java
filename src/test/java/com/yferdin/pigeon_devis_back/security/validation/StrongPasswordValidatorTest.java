@@ -30,7 +30,6 @@ class StrongPasswordValidatorTest {
 
     @Test
     void shouldValidateValidPassword() {
-        when(context.buildConstraintViolationWithTemplate(anyString())).thenReturn(builder);
         assertTrue(validator.isValid("Test@1234", context));
     }
 
@@ -76,7 +75,6 @@ class StrongPasswordValidatorTest {
         "Test@1234Test@1234"  // Long valid password
     })
     void shouldAcceptValidPasswords(String password) {
-        when(context.buildConstraintViolationWithTemplate(anyString())).thenReturn(builder);
         assertTrue(validator.isValid(password, context));
     }
 } 
