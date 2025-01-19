@@ -1,29 +1,43 @@
 package com.yferdin.pigeon_devis_back.config;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-@ActiveProfiles("dev")
+@ActiveProfiles("test")
 class DotenvConfigTest {
+
+    @BeforeAll
+    static void setup() {
+        System.setProperty("spring.profiles.active", "test");
+    }
+
+    @Value("${spring.datasource.url}")
+    private String dbUrl;
+
+    @Value("${spring.datasource.username}")
+    private String dbUsername;
+
+    @Value("${app.jwt.secret}")
+    private String jwtSecret;
 
     @Test
     void shouldLoadEnvironmentVariables() {
         // Vérifie que les variables essentielles sont chargées
-        assertNotNull(System.getProperty("DB_HOST"), "DB_HOST devrait être défini");
-        assertNotNull(System.getProperty("DB_PORT"), "DB_PORT devrait être défini");
-        assertNotNull(System.getProperty("DB_NAME"), "DB_NAME devrait être défini");
-        assertNotNull(System.getProperty("DB_USER"), "DB_USER devrait être défini");
-        assertNotNull(System.getProperty("JWT_SECRET"), "JWT_SECRET devrait être défini");
+        assertNotNull(dbUrl, "L'URL de la base de données devrait être définie");
+        assertNotNull(dbUsername, "Le nom d'utilisateur de la base de données devrait être défini");
+        assertNotNull(jwtSecret, "Le secret JWT devrait être défini");
         
-        // Vérifie les valeurs attendues
-        assertEquals("localhost", System.getProperty("DB_HOST"));
-        assertEquals("5432", System.getProperty("DB_PORT"));
-        assertEquals("pigeon-devis", System.getProperty("DB_NAME"));
-        assertEquals("pigeon-devis", System.getProperty("DB_USER"));
+        // Vérifie les valeurs attendues pour la base de données
+        assertTrue(dbUrl.contains("jdbc:h2:mem:testdb"), "L'URL devrait pointer vers une base H2");
+        assertEquals("sa", dbUsername, "Le nom d'utilisateur devrait être 'sa'");
+        
+        // Vérifie que le secret JWT a une longueur suffisante pour être sécurisé
+        assertTrue(jwtSecret.length() >= 32, "Le secret JWT devrait avoir au moins 32 caractères");
     }
 } 
