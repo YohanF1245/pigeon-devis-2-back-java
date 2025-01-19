@@ -26,11 +26,11 @@ class StrongPasswordValidatorTest {
     @BeforeEach
     void setUp() {
         validator = new StrongPasswordValidator();
-        when(context.buildConstraintViolationWithTemplate(anyString())).thenReturn(builder);
     }
 
     @Test
     void shouldValidateValidPassword() {
+        when(context.buildConstraintViolationWithTemplate(anyString())).thenReturn(builder);
         assertTrue(validator.isValid("Test@1234", context));
     }
 
@@ -46,6 +46,7 @@ class StrongPasswordValidatorTest {
         "aaaaaa@1A"        // Repetitive sequence
     })
     void shouldRejectInvalidPasswords(String password) {
+        when(context.buildConstraintViolationWithTemplate(anyString())).thenReturn(builder);
         assertFalse(validator.isValid(password, context));
         verify(context).disableDefaultConstraintViolation();
         verify(context).buildConstraintViolationWithTemplate(anyString());
@@ -75,6 +76,7 @@ class StrongPasswordValidatorTest {
         "Test@1234Test@1234"  // Long valid password
     })
     void shouldAcceptValidPasswords(String password) {
+        when(context.buildConstraintViolationWithTemplate(anyString())).thenReturn(builder);
         assertTrue(validator.isValid(password, context));
     }
 } 
