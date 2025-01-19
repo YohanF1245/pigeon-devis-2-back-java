@@ -48,6 +48,7 @@ CREATE TABLE users (
     phone VARCHAR(15),
     signature_path VARCHAR(255),
     is_verified BOOLEAN DEFAULT FALSE,
+    role_id INTEGER NOT NULL REFERENCES roles(role_id) ON DELETE RESTRICT,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
@@ -66,16 +67,6 @@ CREATE TABLE roles (
 );
 
 COMMENT ON TABLE roles IS 'Table des rôles utilisateur';
-
--- Table de liaison users-roles
-CREATE TABLE user_roles (
-    user_id UUID NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
-    role_id INTEGER NOT NULL REFERENCES roles(role_id) ON DELETE CASCADE,
-    PRIMARY KEY (user_id, role_id),
-    CONSTRAINT unique_user_role UNIQUE (user_id)
-);
-
-COMMENT ON TABLE user_roles IS 'Table de liaison entre utilisateurs et rôles (un utilisateur a exactement un rôle)';
 
 -- Insertion des rôles par défaut
 INSERT INTO roles (name) VALUES ('ROLE_USER'), ('ROLE_ADMIN');
