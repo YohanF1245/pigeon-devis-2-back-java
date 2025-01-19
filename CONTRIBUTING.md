@@ -12,13 +12,20 @@ Body of the message if needed:
 ```
 
 ### Rules
-1. **Language**: All commits MUST be written in English
-2. **Atomic Commits**: Each commit should represent a single logical change
+1. **One File Per Commit**: Each commit should modify only one file
+   - One commit = One file change
+   - Exception: tightly coupled files (e.g., DTO + Test)
+   - Split multiple file changes into separate commits
+
+2. **Language**: All commits MUST be written in English
+
+3. **Atomic Commits**: Each commit should represent a single logical change
    - Do one thing only
    - Don't mix different concerns (e.g. don't fix a bug and add a feature in the same commit)
    - Should be able to be reverted without affecting other changes
    - Example: updating both SQL schema and data dictionary for the same change is ONE logical change
-3. **Type**: Must be one of:
+
+4. **Type**: Must be one of:
    - `build`: Changes to build system or dependencies
    - `ci`: Changes to CI configuration files and scripts
    - `docs`: Documentation only changes
@@ -29,8 +36,9 @@ Body of the message if needed:
    - `style`: Changes that do not affect the meaning of the code
    - `test`: Adding missing tests or correcting existing tests
 
-4. **Scope**: Usually the filename with extension (e.g., `data-dictionary.md`)
-5. **Subject**: 
+5. **Scope**: Usually the filename with extension (e.g., `data-dictionary.md`)
+
+6. **Subject**: 
    - Maximum 50 characters
    - Written in English
    - Use imperative mood ("add" not "added" or "adds")
