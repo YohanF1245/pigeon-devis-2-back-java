@@ -55,6 +55,7 @@ doc/*
 !doc/business-rules.md
 !doc/user-stories.md
 !doc/back-bench.md
+!doc/database-setup.md
 
 ### Assets ###
 assets/*
