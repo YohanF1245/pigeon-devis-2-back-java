@@ -1,0 +1,14 @@
+type(scope): subject
+
+# Corps du message - liste des modifications majeures
+# - item 1
+# - item 2
+# - item 3
+#
+# Convention de commit :
+# type: build|ci|docs|feat|fix|perf|refactor|style|test
+# scope: nom du fichier ou du module concerné
+# subject: description courte (50 chars max)
+# 
+# Exemple:
+# docs(data-dictionary.md): update business rules 
