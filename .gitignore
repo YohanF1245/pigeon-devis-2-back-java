@@ -50,14 +50,6 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-### Dossier doc ###
-doc/*
-!doc/business-rules.md
-!doc/user-stories.md
-!doc/back-bench.md
-!doc/database-setup.md
-!doc/database-init.sql
-
 ### Assets ###
 assets/*
 !assets/.gitkeep
