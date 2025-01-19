@@ -17,12 +17,13 @@ public class DotenvConfig {
     }
 
     @Bean
-    public void loadEnv(Environment env, Dotenv dotenv) {
+    public Boolean loadEnv(Environment env, Dotenv dotenv) {
         // Charge les variables d'environnement du fichier .env
         dotenv.entries().forEach(entry -> {
             if (System.getenv(entry.getKey()) == null) {
                 System.setProperty(entry.getKey(), entry.getValue());
             }
         });
+        return true;
     }
 } 
