@@ -1,0 +1,42 @@
+# Fichiers système
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Environnement de développement
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Dépendances et build
+node_modules/
+dist/
+build/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Fichiers de configuration locaux
+.env
+.env.local
+.env.*.local
+config.local.js
+
+# Autres
+.git/
+.gitmessage
+doc/
+
+# Ne pas ignorer ces fichiers spécifiques
+!CONTRIBUTING.md
+!LICENSE
+!README.md
+
+# Garder le dossier assets mais ignorer son contenu
+!assets/
+assets/*
+
+# Ne pas ignorer .gitignore lui-même
+!.gitignore 
