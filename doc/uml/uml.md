@@ -16,10 +16,10 @@ Le diagramme de classes doit être mis à jour pour inclure :
    - `ROLE_USER`
    - `ROLE_ADMIN`
 
-3. Relation Many-to-Many entre `User` et `Role` :
-   - Un utilisateur peut avoir plusieurs rôles
+3. Relation One-to-One entre `User` et `Role` :
+   - Un utilisateur a exactement un rôle
    - Un rôle peut être attribué à plusieurs utilisateurs
-   - Table de liaison : `user_roles`
+   - Table de liaison : `user_roles` avec contrainte d'unicité sur user_id
 
 ## Diagramme de Cas d'Utilisation
 Montre les fonctionnalités accessibles aux utilisateurs de Pigeon Devis, avec une séparation claire entre la gestion de compte, la gestion administrative et la gestion commerciale.
