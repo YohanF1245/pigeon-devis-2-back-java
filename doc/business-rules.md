@@ -21,11 +21,11 @@
 - B.R. 6: User can't request a password reset link
 
 ## Role management
-- B.R. 7: A user must have at least one role
+- B.R. 7: A user must have exactly one role
 - B.R. 8: A user is automatically assigned the USER role upon registration
-- B.R. 9: Only administrators can assign the ADMIN role to users
-- B.R. 10: A user can have multiple roles
-- B.R. 11: A user's roles cannot be empty
+- B.R. 9: Only administrators can change a user's role to ADMIN
+- B.R. 10: A user cannot have multiple roles simultaneously
+- B.R. 11: A user's role cannot be empty
 - B.R. 12: Only administrators can modify user roles
 
 ## Dashboard management
