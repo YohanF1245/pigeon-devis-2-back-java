@@ -16,6 +16,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -80,5 +82,10 @@ public class AuthService {
         String jwt = tokenProvider.createToken(authentication);
 
         return new AuthResponse(jwt, user.getEmail(), user.getFirstName(), user.getLastName());
+    }
+
+    public User getUserFromUserDetails(UserDetails userDetails) {
+        return userRepository.findByEmail(userDetails.getUsername())
+                .orElseThrow(() -> new UsernameNotFoundException("Utilisateur non trouvé"));
     }
 } 
