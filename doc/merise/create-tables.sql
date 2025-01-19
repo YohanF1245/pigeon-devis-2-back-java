@@ -12,6 +12,8 @@ DROP TABLE IF EXISTS performances CASCADE;
 DROP TABLE IF EXISTS businesses CASCADE;
 DROP TABLE IF EXISTS addresses CASCADE;
 DROP TABLE IF EXISTS password_reset_links CASCADE;
+DROP TABLE IF EXISTS user_roles CASCADE;
+DROP TABLE IF EXISTS roles CASCADE;
 DROP TABLE IF EXISTS users CASCADE;
 
 -- Nettoyage des types énumérés
@@ -19,6 +21,7 @@ DROP TYPE IF EXISTS invoice_status CASCADE;
 DROP TYPE IF EXISTS estimate_status CASCADE;
 DROP TYPE IF EXISTS customer_type CASCADE;
 DROP TYPE IF EXISTS performance_type CASCADE;
+DROP TYPE IF EXISTS role_type CASCADE;
 
 -- Extension pour la génération d'UUID
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
@@ -31,6 +34,9 @@ BEGIN
     RETURN NEW;
 END;
 $$ language 'plpgsql';
+
+-- Type énuméré pour les rôles
+CREATE TYPE role_type AS ENUM ('ROLE_USER', 'ROLE_ADMIN');
 
 -- Table des utilisateurs
 CREATE TABLE users (
@@ -52,6 +58,26 @@ CREATE TRIGGER update_users_updated_at
     EXECUTE FUNCTION update_updated_at_column();
 
 COMMENT ON TABLE users IS 'Table des utilisateurs de l''application';
+
+-- Table des rôles
+CREATE TABLE roles (
+    role_id SERIAL PRIMARY KEY,
+    name role_type NOT NULL UNIQUE
+);
+
+COMMENT ON TABLE roles IS 'Table des rôles utilisateur';
+
+-- Table de liaison users-roles
+CREATE TABLE user_roles (
+    user_id UUID NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
+    role_id INTEGER NOT NULL REFERENCES roles(role_id) ON DELETE CASCADE,
+    PRIMARY KEY (user_id, role_id)
+);
+
+COMMENT ON TABLE user_roles IS 'Table de liaison entre utilisateurs et rôles';
+
+-- Insertion des rôles par défaut
+INSERT INTO roles (name) VALUES ('ROLE_USER'), ('ROLE_ADMIN');
 
 -- Table des liens de réinitialisation de mot de passe
 CREATE TABLE password_reset_links (
