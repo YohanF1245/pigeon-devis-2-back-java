@@ -26,7 +26,6 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
 
     public AuthResponse login(LoginRequest loginRequest) {
-        // Authentifie l'utilisateur avec Spring Security
         Authentication authentication = authenticationManager.authenticate(
             new UsernamePasswordAuthenticationToken(
                 loginRequest.getEmail(),
@@ -34,40 +33,32 @@ public class AuthService {
             )
         );
 
-        // Stocke l'authentification dans le contexte de sécurité
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        // Récupère l'utilisateur depuis la base de données
         User user = userRepository.findByEmail(loginRequest.getEmail())
             .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
 
-        // Génère le token JWT
         String jwt = tokenProvider.createToken(authentication);
 
-        // Retourne la réponse avec le token et les informations de l'utilisateur
         return new AuthResponse(jwt, user.getEmail(), user.getFirstName(), user.getLastName());
     }
 
     @Transactional
     public AuthResponse register(RegisterRequest registerRequest) {
-        // Vérifie si l'email existe déjà
         if (userRepository.existsByEmail(registerRequest.getEmail())) {
             throw new EmailAlreadyExistsException("Un compte existe déjà avec cet email");
         }
 
-        // Crée un nouvel utilisateur
         User user = new User();
         user.setEmail(registerRequest.getEmail());
         user.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
         user.setFirstName(registerRequest.getFirstName());
         user.setLastName(registerRequest.getLastName());
         user.setPhone(registerRequest.getPhone());
-        user.setVerified(true); // Pour le développement, on met directement à true
+        user.setVerified(true);
 
-        // Sauvegarde l'utilisateur
         userRepository.save(user);
 
-        // Authentifie le nouvel utilisateur
         Authentication authentication = authenticationManager.authenticate(
             new UsernamePasswordAuthenticationToken(
                 registerRequest.getEmail(),
@@ -77,10 +68,8 @@ public class AuthService {
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        // Génère le token JWT
         String jwt = tokenProvider.createToken(authentication);
 
-        // Retourne la réponse
         return new AuthResponse(jwt, user.getEmail(), user.getFirstName(), user.getLastName());
     }
 } 
