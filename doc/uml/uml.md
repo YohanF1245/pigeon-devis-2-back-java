@@ -5,6 +5,22 @@ Représente la structure du système de gestion de devis, avec les entités prin
 
 ![Diagramme de Classes](../../assets/img/class-diagram.png)
 
+### Modifications pour la gestion des rôles
+Le diagramme de classes doit être mis à jour pour inclure :
+
+1. Nouvelle entité `Role` :
+   - `role_id: Long (PK)`
+   - `name: RoleType (ENUM)`
+
+2. Énumération `RoleType` :
+   - `ROLE_USER`
+   - `ROLE_ADMIN`
+
+3. Relation Many-to-Many entre `User` et `Role` :
+   - Un utilisateur peut avoir plusieurs rôles
+   - Un rôle peut être attribué à plusieurs utilisateurs
+   - Table de liaison : `user_roles`
+
 ## Diagramme de Cas d'Utilisation
 Montre les fonctionnalités accessibles aux utilisateurs de Pigeon Devis, avec une séparation claire entre la gestion de compte, la gestion administrative et la gestion commerciale.
 
