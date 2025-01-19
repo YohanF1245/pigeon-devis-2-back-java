@@ -11,18 +11,13 @@
 | phone | VARCHAR | 15 | Numéro de téléphone | Optional (B.R. 17) |
 | signature_path | VARCHAR | 255 | Chemin du fichier signature | Optional (B.R. 20) |
 | is_verified | BOOLEAN | - | Compte vérifié | Default false (B.R. 5) |
+| role_id | INTEGER | - | ID du rôle | FK Role, Required (B.R. 7) |
 
 ## Rôle (Role)
 | Champ | Type | Taille | Description | Règle |
 |-------|------|---------|-------------|--------|
 | role_id | SERIAL | - | Identifiant unique | Clé primaire |
 | name | ENUM | - | Type de rôle (USER/ADMIN) | Unique, Required |
-
-## Rôle Utilisateur (UserRole)
-| Champ | Type | Taille | Description | Règle |
-|-------|------|---------|-------------|--------|
-| user_id | UUID | 36 | ID de l'utilisateur | FK User, Required, Unique |
-| role_id | INTEGER | - | ID du rôle | FK Role, Required |
 
 ## Réinitialisation de mot de passe (PasswordResetLink)
 | Champ | Type | Taille | Description | Règle |
