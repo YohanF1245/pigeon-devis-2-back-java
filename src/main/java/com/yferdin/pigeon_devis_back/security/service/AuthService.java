@@ -7,6 +7,9 @@ import com.yferdin.pigeon_devis_back.security.exception.EmailAlreadyExistsExcept
 import com.yferdin.pigeon_devis_back.security.jwt.JwtTokenProvider;
 import com.yferdin.pigeon_devis_back.user.model.User;
 import com.yferdin.pigeon_devis_back.user.repository.UserRepository;
+import com.yferdin.pigeon_devis_back.user.model.Role;
+import com.yferdin.pigeon_devis_back.user.repository.RoleRepository;
+import com.yferdin.pigeon_devis_back.user.model.RoleType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -24,6 +27,7 @@ public class AuthService {
     private final JwtTokenProvider tokenProvider;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final RoleRepository roleRepository;
 
     public AuthResponse login(LoginRequest loginRequest) {
         Authentication authentication = authenticationManager.authenticate(
@@ -56,6 +60,11 @@ public class AuthService {
         user.setLastName(registerRequest.getLastName());
         user.setPhone(registerRequest.getPhone());
         user.setVerified(true);
+
+        // Attribution du rôle USER par défaut
+        Role userRole = roleRepository.findByName(RoleType.ROLE_USER)
+            .orElseThrow(() -> new RuntimeException("Erreur: Le rôle USER n'existe pas"));
+        user.getRoles().add(userRole);
 
         userRepository.save(user);
 
