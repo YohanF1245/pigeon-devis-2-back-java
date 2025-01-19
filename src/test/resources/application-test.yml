@@ -10,6 +10,9 @@ spring:
       ddl-auto: create-drop
     show-sql: true
 
-jwt:
-  secret: ${JWT_SECRET:test-secret-key-must-be-at-least-256-bits-long-for-testing}
-  expiration: ${JWT_EXPIRATION:86400000} 
+app:
+  jwt:
+    secret: ${JWT_SECRET:test-secret-key-must-be-at-least-256-bits-long-for-testing}
+    expiration: ${JWT_EXPIRATION:86400000}
+    header: Authorization
+    prefix: "Bearer " 
