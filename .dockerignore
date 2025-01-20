@@ -1,0 +1,49 @@
+# Git
+.git
+.gitignore
+.gitattributes
+.gitmessage
+
+# IDE
+.idea/
+*.iml
+.vscode/
+.project
+.classpath
+.settings/
+
+# Builds
+target/
+build/
+out/
+bin/
+
+# Logs
+logs/
+*.log
+
+# Environment
+.env
+.env.example
+
+# Documentation
+README.md
+CONTRIBUTING.md
+LICENSE
+doc/
+docs/
+*.md
+
+# Docker
+.docker/
+docker-compose*.yml
+Dockerfile*
+
+# Tests
+src/test/
+**/test/
+**/tests/
+**/*Test.java 
+
+# Cursor
+.cursorrules 
