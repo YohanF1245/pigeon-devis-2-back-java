@@ -14,7 +14,6 @@ import com.yferdin.pigeon_devis_back.user.repository.UserRepository;
 import com.yferdin.pigeon_devis_back.user.model.Role;
 import com.yferdin.pigeon_devis_back.user.repository.RoleRepository;
 import com.yferdin.pigeon_devis_back.user.model.RoleType;
-import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.DisabledException;
@@ -85,8 +84,8 @@ public class AuthService {
 
         try {
             emailService.sendVerificationEmail(user.getEmail(), verificationToken.getToken());
-        } catch (MessagingException e) {
-            throw new RuntimeException("Erreur lors de l'envoi de l'email de vérification", e);
+        } catch (RuntimeException e) {
+            throw new RuntimeException("Erreur lors de l'inscription : " + e.getMessage());
         }
 
         return new AuthResponse(null, user.getEmail(), user.getFirstName(), user.getLastName());
