@@ -43,6 +43,8 @@ Body of the message if needed:
    - Written in English
    - Use imperative mood ("add" not "added" or "adds")
    - No period at the end
+7 **Cursor Rules**:
+   - try to put max amount of commands in single run command
 
 ### Examples
 Good commits:
