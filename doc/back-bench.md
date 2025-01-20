@@ -2,17 +2,17 @@
 
 ## 1.1 Criteria
 
-| Criteria                   | NestJS                                          | Spring Framework                                               |
-| -------------------------- | ----------------------------------------------- | -------------------------------------------------------------- |
-| Framework Type            | Node.js, based on JavaScript and TypeScript     | Java, based on Java language                                   |
-| Architecture              | Modular, extensible                            | Based on annotations and XML                                   |
-| Multi-threading Support   | Not supported                                  | Supported                                                      |
-| Memory Usage             | Low memory usage                               | Higher memory usage                                            |
-| Performance              | Ideal for I/O tasks                            | Better for computation-heavy applications                       |
-| Community                | Fast-growing JavaScript community              | Well-established Java community                                |
-| Ease of Use              | Easy to use, powerful CLI                      | May require more configuration                                 |
-| Dependency               | Built-in dependency injection                   | Dependency injection via annotations                           |
-| Use Cases                | Applications requiring rapid scalability        | Enterprise applications with high computational requirements    |
+| Criteria                | NestJS                                      | Spring Framework                                             |
+| ----------------------- | ------------------------------------------- | ------------------------------------------------------------ |
+| Framework Type          | Node.js, based on JavaScript and TypeScript | Java, based on Java language                                 |
+| Architecture            | Modular, extensible                         | Based on annotations and XML                                 |
+| Multi-threading Support | Not supported                               | Supported                                                    |
+| Memory Usage            | Low memory usage                            | Higher memory usage                                          |
+| Performance             | Ideal for I/O tasks                         | Better for computation-heavy applications                    |
+| Community               | Fast-growing JavaScript community           | Well-established Java community                              |
+| Ease of Use             | Easy to use, powerful CLI                   | May require more configuration                               |
+| Dependency              | Built-in dependency injection               | Dependency injection via annotations                         |
+| Use Cases               | Applications requiring rapid scalability    | Enterprise applications with high computational requirements |
 
 ## 1.2 Advantages and Disadvantages
 
