@@ -21,7 +21,7 @@
 - B.R. 6: User can't request a password reset link
 
 ## Role management
-- B.R. 7: A user must have exactly one role
+- B.R. 7: A user is a user or an administrator
 - B.R. 8: A user is automatically assigned the USER role upon registration
 - B.R. 9: Only administrators can change a user's role to ADMIN
 - B.R. 10: A user cannot have multiple roles simultaneously

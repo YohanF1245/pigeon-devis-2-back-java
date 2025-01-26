@@ -14,6 +14,7 @@ DROP TABLE IF EXISTS addresses CASCADE;
 DROP TABLE IF EXISTS password_reset_links CASCADE;
 DROP TABLE IF EXISTS users CASCADE;
 DROP TABLE IF EXISTS roles CASCADE;
+DROP TABLE IF EXISTS verification_tokens CASCADE;
 
 -- Nettoyage des types énumérés
 DROP TYPE IF EXISTS invoice_status CASCADE;
@@ -34,56 +35,37 @@ BEGIN
 END;
 $$ language 'plpgsql';
 
--- Type énuméré pour les rôles
+-- Création du type ENUM pour les rôles
 CREATE TYPE role_type AS ENUM ('ROLE_USER', 'ROLE_ADMIN');
-
--- Table des rôles
-CREATE TABLE roles (
-    role_id SERIAL PRIMARY KEY,
-    name role_type NOT NULL UNIQUE
-);
-
-COMMENT ON TABLE roles IS 'Table des rôles utilisateur';
-
--- Insertion des rôles par défaut
-INSERT INTO roles (name) VALUES ('ROLE_USER'), ('ROLE_ADMIN');
 
 -- Table des utilisateurs
 CREATE TABLE users (
-    user_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     email VARCHAR(255) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
-    first_name VARCHAR(50) NOT NULL,
-    last_name VARCHAR(50) NOT NULL,
-    phone VARCHAR(15),
-    signature_path VARCHAR(255),
-    is_verified BOOLEAN DEFAULT FALSE,
-    role_id INTEGER NOT NULL REFERENCES roles(role_id) ON DELETE RESTRICT,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    first_name VARCHAR(100) NOT NULL,
+    last_name VARCHAR(100) NOT NULL,
+    phone VARCHAR(20),
+    enabled BOOLEAN DEFAULT FALSE,
+    verified BOOLEAN DEFAULT FALSE,
+    role role_type NOT NULL DEFAULT 'ROLE_USER',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    signature_path VARCHAR(255)
 );
 
-CREATE TRIGGER update_users_updated_at
-    BEFORE UPDATE ON users
-    FOR EACH ROW
-    EXECUTE FUNCTION update_updated_at_column();
-
-COMMENT ON TABLE users IS 'Table des utilisateurs de l''application';
-
--- Table des liens de réinitialisation de mot de passe
-CREATE TABLE password_reset_links (
-    reset_link_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    user_id UUID NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
-    unique_link UUID NOT NULL DEFAULT uuid_generate_v4(),
-    expires_at TIMESTAMPTZ NOT NULL DEFAULT NOW() + INTERVAL '1 hour',
-    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+-- Table des tokens de vérification
+CREATE TABLE verification_tokens (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    token VARCHAR(255) NOT NULL,
+    user_id UUID NOT NULL,
+    expiry_date TIMESTAMP NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
 );
-
-COMMENT ON TABLE password_reset_links IS 'Table des liens de réinitialisation de mot de passe';
 
 -- Table des adresses
 CREATE TABLE addresses (
-    address_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    address_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     street_number VARCHAR(10) NOT NULL,
     street_name VARCHAR(255) NOT NULL,
     zip_code VARCHAR(10) NOT NULL,
@@ -91,20 +73,18 @@ CREATE TABLE addresses (
     complement VARCHAR(255)
 );
 
-COMMENT ON TABLE addresses IS 'Table des adresses postales';
-
 -- Table des entreprises
 CREATE TABLE businesses (
-    business_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    owner_id UUID NOT NULL REFERENCES users(user_id) ON DELETE RESTRICT,
+    business_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    owner_id UUID NOT NULL,
     siret VARCHAR(14) NOT NULL UNIQUE,
     ape_code VARCHAR(5) NOT NULL,
     tax_code VARCHAR(50) NOT NULL,
     logo_path VARCHAR(255),
-    address_id UUID NOT NULL REFERENCES addresses(address_id) ON DELETE RESTRICT
+    address_id UUID NOT NULL,
+    FOREIGN KEY (owner_id) REFERENCES users(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (address_id) REFERENCES addresses(address_id) ON DELETE CASCADE
 );
-
-COMMENT ON TABLE businesses IS 'Table des entreprises';
 
 -- Types énumérés
 CREATE TYPE performance_type AS ENUM ('SERVICE', 'PRODUCT');
@@ -217,6 +197,17 @@ CREATE TRIGGER update_expenses_updated_at
     EXECUTE FUNCTION update_updated_at_column();
 
 COMMENT ON TABLE expenses IS 'Table des dépenses';
+
+-- Table des liens de réinitialisation de mot de passe
+CREATE TABLE password_reset_links (
+    reset_link_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_id UUID NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
+    unique_link UUID NOT NULL DEFAULT uuid_generate_v4(),
+    expires_at TIMESTAMPTZ NOT NULL DEFAULT NOW() + INTERVAL '1 hour',
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+COMMENT ON TABLE password_reset_links IS 'Table des liens de réinitialisation de mot de passe';
 
 -- Index pour optimiser les performances
 CREATE INDEX idx_password_reset_links_user_id ON password_reset_links(user_id);
