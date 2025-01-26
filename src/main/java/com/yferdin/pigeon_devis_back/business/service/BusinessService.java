@@ -27,20 +27,18 @@ public class BusinessService {
 
         // Créer l'adresse
         Address address = new Address();
-        address.setStreetNumber(createBusinessDTO.getAddress().getStreetNumber());
-        address.setStreetName(createBusinessDTO.getAddress().getStreetName());
-        address.setZipCode(createBusinessDTO.getAddress().getZipCode());
+        address.setStreet(createBusinessDTO.getAddress().getStreet());
         address.setCity(createBusinessDTO.getAddress().getCity());
-        address.setComplement(createBusinessDTO.getAddress().getComplement());
+        address.setZipCode(createBusinessDTO.getAddress().getZipCode());
+        address.setCountry(createBusinessDTO.getAddress().getCountry());
         
         address = addressRepository.save(address);
 
         // Créer l'entreprise
         Business business = new Business();
         business.setOwner(owner);
+        business.setName(createBusinessDTO.getName());
         business.setSiret(createBusinessDTO.getSiret());
-        business.setApeCode(createBusinessDTO.getApeCode());
-        business.setTaxCode(createBusinessDTO.getTaxCode());
         business.setAddress(address);
 
         return businessRepository.save(business);
