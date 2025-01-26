@@ -13,22 +13,19 @@ import lombok.Setter;
 @AllArgsConstructor
 public class CreateAddressDTO {
 
-    @NotBlank(message = "Le numéro de rue est obligatoire")
-    @Size(max = 10, message = "Le numéro de rue ne peut pas dépasser 10 caractères")
-    private String streetNumber;
-
-    @NotBlank(message = "Le nom de rue est obligatoire")
-    @Size(max = 255, message = "Le nom de rue ne peut pas dépasser 255 caractères")
-    private String streetName;
-
-    @NotBlank(message = "Le code postal est obligatoire")
-    @Size(max = 10, message = "Le code postal ne peut pas dépasser 10 caractères")
-    private String zipCode;
+    @NotBlank(message = "La rue est obligatoire")
+    @Size(max = 255, message = "La rue ne peut pas dépasser 255 caractères")
+    private String street;
 
     @NotBlank(message = "La ville est obligatoire")
-    @Size(max = 100, message = "La ville ne peut pas dépasser 100 caractères")
+    @Size(max = 255, message = "La ville ne peut pas dépasser 255 caractères")
     private String city;
 
-    @Size(max = 255, message = "Le complément d'adresse ne peut pas dépasser 255 caractères")
-    private String complement;
+    @NotBlank(message = "Le code postal est obligatoire")
+    @Size(max = 255, message = "Le code postal ne peut pas dépasser 255 caractères")
+    private String zipCode;
+
+    @NotBlank(message = "Le pays est obligatoire")
+    @Size(max = 255, message = "Le pays ne peut pas dépasser 255 caractères")
+    private String country;
 } 
