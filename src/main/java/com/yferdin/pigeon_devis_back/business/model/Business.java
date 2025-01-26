@@ -31,12 +31,6 @@ public class Business {
     @Column(nullable = false, unique = true, length = 14)
     private String siret;
 
-    @Column(name = "ape_code", nullable = false, length = 5)
-    private String apeCode;
-
-    @Column(name = "tax_code", nullable = false, length = 50)
-    private String taxCode;
-
     @Column(name = "logo_path")
     private String logoPath;
 

@@ -1,54 +1,55 @@
 -- Script de création des tables pour les tests (19/01/2024)
 
 -- Suppression des tables existantes
-DROP TABLE IF EXISTS verification_tokens;
 DROP TABLE IF EXISTS businesses;
 DROP TABLE IF EXISTS addresses;
+DROP TABLE IF EXISTS verification_tokens;
 DROP TABLE IF EXISTS users;
 DROP TYPE IF EXISTS role_type;
 
--- Création des tables
-CREATE TYPE role_type AS ENUM ('USER', 'ADMIN');
+-- Création du type ENUM pour les rôles
+CREATE TYPE role_type AS ENUM ('ROLE_USER', 'ROLE_ADMIN');
 
+-- Table des utilisateurs
 CREATE TABLE users (
-    user_id CHAR(36) NOT NULL,
+    user_id uuid PRIMARY KEY,
     email VARCHAR(255) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
-    first_name VARCHAR(255) NOT NULL,
-    last_name VARCHAR(255) NOT NULL,
-    phone VARCHAR(255) NOT NULL,
-    role role_type NOT NULL,
+    first_name VARCHAR(100) NOT NULL,
+    last_name VARCHAR(100) NOT NULL,
+    phone VARCHAR(20),
+    role role_type NOT NULL DEFAULT 'ROLE_USER',
     enabled BOOLEAN NOT NULL DEFAULT FALSE,
     verified BOOLEAN NOT NULL DEFAULT FALSE,
-    PRIMARY KEY (user_id)
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    signature_path VARCHAR(255)
 );
 
+-- Table des tokens de vérification
 CREATE TABLE verification_tokens (
-    id CHAR(36) NOT NULL,
+    id uuid PRIMARY KEY,
+    token VARCHAR(255) NOT NULL,
+    user_id uuid NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
     expiry_date TIMESTAMP NOT NULL,
-    user_id CHAR(36) NOT NULL UNIQUE,
-    token VARCHAR(255) NOT NULL UNIQUE,
-    PRIMARY KEY (id),
-    FOREIGN KEY (user_id) REFERENCES users(user_id)
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Table des adresses
 CREATE TABLE addresses (
-    address_id CHAR(36) NOT NULL,
+    address_id uuid PRIMARY KEY,
     street VARCHAR(255) NOT NULL,
     city VARCHAR(255) NOT NULL,
     zip_code VARCHAR(255) NOT NULL,
-    country VARCHAR(255) NOT NULL,
-    PRIMARY KEY (address_id)
+    country VARCHAR(255) NOT NULL
 );
 
+-- Table des entreprises
 CREATE TABLE businesses (
-    business_id CHAR(36) NOT NULL,
-    owner_id CHAR(36) NOT NULL,
+    business_id uuid PRIMARY KEY,
+    owner_id uuid NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
     name VARCHAR(255) NOT NULL,
     siret VARCHAR(14) NOT NULL UNIQUE,
     logo_path VARCHAR(255),
-    address_id CHAR(36) NOT NULL,
-    PRIMARY KEY (business_id),
-    FOREIGN KEY (owner_id) REFERENCES users(user_id),
-    FOREIGN KEY (address_id) REFERENCES addresses(address_id)
+    address_id uuid NOT NULL REFERENCES addresses(address_id) ON DELETE CASCADE
 ); 

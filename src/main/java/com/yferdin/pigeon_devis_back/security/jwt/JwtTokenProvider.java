@@ -19,6 +19,7 @@ import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.stream.Collectors;
 
@@ -36,17 +37,17 @@ public class JwtTokenProvider {
 
     public String createToken(Authentication authentication) {
         String username = authentication.getName();
-        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
-        String roles = authorities.stream()
+        String role = authentication.getAuthorities().stream()
+                .findFirst()
                 .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.joining(","));
+                .orElse("");
 
         Date now = new Date();
         Date validity = new Date(now.getTime() + jwtConfig.getExpiration());
 
         return Jwts.builder()
                 .subject(username)
-                .claim("roles", roles)
+                .claim("role", role)
                 .issuedAt(now)
                 .expiration(validity)
                 .signWith(getSigningKey())
@@ -60,11 +61,8 @@ public class JwtTokenProvider {
                 .parseSignedClaims(token);
 
         Claims claims = claimsJws.getPayload();
-
-        Collection<? extends GrantedAuthority> authorities = Arrays.stream(claims.get("roles", String.class).split(","))
-                .filter(role -> !role.isEmpty())
-                .map(SimpleGrantedAuthority::new)
-                .collect(Collectors.toList());
+        String role = claims.get("role", String.class);
+        Collection<? extends GrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority(role));
 
         org.springframework.security.core.userdetails.User principal = 
             new org.springframework.security.core.userdetails.User(claims.getSubject(), "", authorities);

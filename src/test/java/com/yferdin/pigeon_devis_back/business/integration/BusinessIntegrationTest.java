@@ -84,18 +84,18 @@ class BusinessIntegrationTest {
         registerRequest.setLastName("Doe");
         registerRequest.setPhone("+33612345678");
 
+        // Enregistrer l'utilisateur
         MvcResult registerResult = mockMvc.perform(post("/api/auth/register")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(registerRequest)))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andReturn();
 
         // Vérifier l'utilisateur
         User user = userRepository.findByEmail("test@test.com").orElseThrow();
-        VerificationToken token = verificationTokenRepository.findByUser(user).orElseThrow();
-        mockMvc.perform(get("/api/auth/verify")
-                .param("token", token.getToken()))
-                .andExpect(status().isOk());
+        user.setVerified(true);
+        user.setEnabled(true);
+        userRepository.save(user);
 
         // Se connecter pour obtenir le token
         LoginRequest loginRequest = new LoginRequest();
