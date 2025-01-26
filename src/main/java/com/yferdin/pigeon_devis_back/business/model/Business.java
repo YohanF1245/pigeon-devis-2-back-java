@@ -25,6 +25,9 @@ public class Business {
     @JoinColumn(name = "owner_id", nullable = false)
     private User owner;
 
+    @Column(nullable = false)
+    private String name;
+
     @Column(nullable = false, unique = true, length = 14)
     private String siret;
 
