@@ -11,8 +11,6 @@ import com.yferdin.pigeon_devis_back.security.model.VerificationToken;
 import com.yferdin.pigeon_devis_back.security.repository.VerificationTokenRepository;
 import com.yferdin.pigeon_devis_back.user.model.User;
 import com.yferdin.pigeon_devis_back.user.repository.UserRepository;
-import com.yferdin.pigeon_devis_back.user.model.Role;
-import com.yferdin.pigeon_devis_back.user.repository.RoleRepository;
 import com.yferdin.pigeon_devis_back.user.model.RoleType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -25,6 +23,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -34,18 +34,10 @@ public class AuthService {
     private final JwtTokenProvider tokenProvider;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final RoleRepository roleRepository;
     private final VerificationTokenRepository verificationTokenRepository;
     private final EmailService emailService;
 
     public AuthResponse login(LoginRequest loginRequest) {
-        User user = userRepository.findByEmail(loginRequest.getEmail())
-            .orElseThrow(() -> new UsernameNotFoundException("Utilisateur non trouvé"));
-
-        if (!user.isVerified()) {
-            throw new DisabledException("Veuillez vérifier votre compte via l'email reçu");
-        }
-
         Authentication authentication = authenticationManager.authenticate(
             new UsernamePasswordAuthenticationToken(
                 loginRequest.getEmail(),
@@ -53,42 +45,59 @@ public class AuthService {
             )
         );
 
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        String jwt = tokenProvider.createToken(authentication);
+        User user = (User) authentication.getPrincipal();
+        String token = tokenProvider.generateToken(user);
 
-        return new AuthResponse(jwt, user.getEmail(), user.getFirstName(), user.getLastName());
+        return AuthResponse.builder()
+                .token(token)
+                .email(user.getEmail())
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .build();
     }
 
     @Transactional
-    public AuthResponse register(RegisterRequest registerRequest) {
-        if (userRepository.existsByEmail(registerRequest.getEmail())) {
-            throw new EmailAlreadyExistsException("Un compte existe déjà avec cet email");
+    public AuthResponse register(RegisterRequest request) {
+        if (userRepository.existsByEmail(request.getEmail())) {
+            throw new EmailAlreadyExistsException("Email already exists");
         }
 
-        User user = new User();
-        user.setEmail(registerRequest.getEmail());
-        user.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
-        user.setFirstName(registerRequest.getFirstName());
-        user.setLastName(registerRequest.getLastName());
-        user.setPhone(registerRequest.getPhone());
-        user.setVerified(false);
-
-        Role userRole = roleRepository.findByName(RoleType.ROLE_USER)
-            .orElseThrow(() -> new RuntimeException("Erreur: Le rôle USER n'existe pas"));
-        user.setRole(userRole);
+        User user = User.builder()
+                .email(request.getEmail())
+                .password(passwordEncoder.encode(request.getPassword()))
+                .firstName(request.getFirstName())
+                .lastName(request.getLastName())
+                .role(RoleType.ROLE_USER)
+                .enabled(true)
+                .verified(false)
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
+                .build();
 
         user = userRepository.save(user);
+        
+        String token = tokenProvider.generateToken(user);
+        
+        // Envoyer l'email de vérification
+        String verificationToken = generateVerificationToken(user);
+        emailService.sendVerificationEmail(user.getEmail(), verificationToken);
+        
+        return AuthResponse.builder()
+                .token(token)
+                .email(user.getEmail())
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .build();
+    }
 
-        VerificationToken verificationToken = new VerificationToken(user);
+    private String generateVerificationToken(User user) {
+        String token = UUID.randomUUID().toString();
+        VerificationToken verificationToken = new VerificationToken();
+        verificationToken.setToken(token);
+        verificationToken.setUser(user);
+        verificationToken.setExpiryDate(LocalDateTime.now().plusHours(24));
         verificationTokenRepository.save(verificationToken);
-
-        try {
-            emailService.sendVerificationEmail(user.getEmail(), verificationToken.getToken());
-        } catch (RuntimeException e) {
-            throw new RuntimeException("Erreur lors de l'inscription : " + e.getMessage());
-        }
-
-        return new AuthResponse(null, user.getEmail(), user.getFirstName(), user.getLastName());
+        return token;
     }
 
     @Transactional
