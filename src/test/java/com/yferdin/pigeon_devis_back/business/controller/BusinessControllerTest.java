@@ -51,21 +51,21 @@ class BusinessControllerTest {
     void setUp() {
         // Préparer les données de test
         createBusinessDTO = new CreateBusinessDTO();
+        createBusinessDTO.setName("Test Business");
         createBusinessDTO.setSiret("12345678901234");
-        createBusinessDTO.setApeCode("6201Z");
-        createBusinessDTO.setTaxCode("FR12345678901");
 
         CreateAddressDTO addressDTO = new CreateAddressDTO();
-        addressDTO.setStreetNumber("1");
-        addressDTO.setStreetName("Rue de Test");
-        addressDTO.setZipCode("75000");
+        addressDTO.setStreet("1 Rue de Test");
         addressDTO.setCity("Paris");
+        addressDTO.setZipCode("75000");
+        addressDTO.setCountry("France");
         createBusinessDTO.setAddress(addressDTO);
 
         user = new User();
         user.setEmail("test@test.com");
 
         business = new Business();
+        business.setName(createBusinessDTO.getName());
         business.setSiret(createBusinessDTO.getSiret());
 
         // Initialiser le validateur
@@ -113,20 +113,6 @@ class BusinessControllerTest {
         assertFalse(violations.isEmpty());
         assertTrue(violations.stream()
                 .anyMatch(violation -> violation.getPropertyPath().toString().equals("siret")));
-    }
-
-    @Test
-    void createBusiness_WithInvalidApeCode_ShouldFailValidation() {
-        // Given
-        createBusinessDTO.setApeCode("123"); // Code APE invalide
-
-        // When
-        Set<ConstraintViolation<CreateBusinessDTO>> violations = validator.validate(createBusinessDTO);
-
-        // Then
-        assertFalse(violations.isEmpty());
-        assertTrue(violations.stream()
-                .anyMatch(violation -> violation.getPropertyPath().toString().equals("apeCode")));
     }
 
     @Test
