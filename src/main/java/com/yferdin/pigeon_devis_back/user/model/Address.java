@@ -19,17 +19,15 @@ public class Address {
     @Column(name = "address_id")
     private UUID id;
 
-    @Column(name = "street_number", nullable = false, length = 10)
-    private String streetNumber;
+    @Column(nullable = false)
+    private String street;
 
-    @Column(name = "street_name", nullable = false)
-    private String streetName;
-
-    @Column(name = "zip_code", nullable = false, length = 10)
-    private String zipCode;
-
-    @Column(nullable = false, length = 100)
+    @Column(nullable = false)
     private String city;
 
-    private String complement;
+    @Column(name = "zip_code", nullable = false)
+    private String zipCode;
+
+    @Column(nullable = false)
+    private String country;
 } 
